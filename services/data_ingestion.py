@@ -8,7 +8,7 @@ from typing import Optional, Dict, Any
 import logging
 from io import StringIO, BytesIO
 import requests
-from sklearn.datasets import load_iris, load_boston, load_wine, load_diabetes
+from sklearn.datasets import load_iris, load_wine, load_diabetes, make_regression, fetch_california_housing
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -184,19 +184,26 @@ class DataIngestionService:
                 df['target'] = data.target
                 df['target_names'] = [data.target_names[i] for i in data.target]
                 
+            elif dataset_name == 'california_housing':
+                data = fetch_california_housing()
+                df = pd.DataFrame(data.data, columns=data.feature_names)
+                df['target'] = data.target
+                
             elif dataset_name == 'boston':
-                try:
-                    data = load_boston()
-                    df = pd.DataFrame(data.data, columns=data.feature_names)
-                    df['target'] = data.target
-                except Exception:
-                    # Boston dataset might be removed in newer sklearn versions
-                    # Create a simple regression dataset instead
-                    from sklearn.datasets import make_regression
-                    X, y = make_regression(n_samples=506, n_features=13, noise=0.1, random_state=42)
-                    feature_names = [f'feature_{i}' for i in range(13)]
-                    df = pd.DataFrame(X, columns=feature_names)
-                    df['target'] = y
+                # Boston dataset removed due to ethical concerns - using synthetic regression data
+                X, y = make_regression(
+                    n_samples=506, 
+                    n_features=13, 
+                    n_informative=10,
+                    noise=0.1, 
+                    random_state=42
+                )
+                feature_names = [
+                    'crim', 'zn', 'indus', 'chas', 'nox', 'rm', 'age', 
+                    'dis', 'rad', 'tax', 'ptratio', 'b', 'lstat'
+                ]
+                df = pd.DataFrame(X, columns=feature_names)
+                df['target'] = y
                 
             elif dataset_name == 'wine':
                 data = load_wine()
