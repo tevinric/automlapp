@@ -192,9 +192,10 @@ def sample_data_selection(data_service):
     
     sample_datasets = {
         "Iris Classification": "iris",
-        "Boston Housing Regression": "boston",
+        "California Housing Regression": "california_housing",
         "Wine Classification": "wine",
-        "Diabetes Regression": "diabetes"
+        "Diabetes Regression": "diabetes",
+        "Synthetic Housing Regression": "boston"
     }
     
     selected_dataset = st.selectbox("Choose a sample dataset:", list(sample_datasets.keys()))
